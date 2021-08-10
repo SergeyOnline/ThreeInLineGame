@@ -28,7 +28,10 @@ class GameScene: SKScene {
 	override init(size: CGSize) {
 		super.init(size: size)
 		
+		let _ = SKLabelNode(fontNamed: "GillSans-BoldItalic")
+		
 		addChild(gameLayer)
+		gameLayer.isHidden = true
 		
 		let layerPosition = CGPoint(
 			x: size.width / 2 - tileWidth * CGFloat(numColumns) / 2,
@@ -73,6 +76,18 @@ class GameScene: SKScene {
 			sprite.position = pointFor(column: figure.column, row: figure.row)
 			figuresLayer.addChild(sprite)
 			figure.sprite = sprite
+			
+			sprite.alpha = 0
+			sprite.xScale = 0.5
+			sprite.yScale = 0.5
+			
+			sprite.run(SKAction.sequence([
+				SKAction.wait(forDuration: 0.25, withRange: 0.5),
+				SKAction.group([
+					SKAction.fadeIn(withDuration: 0.25),
+					SKAction.scale(to: 1.0, duration: 0.25)
+				])
+			]))
 		}
 	}
 	
@@ -116,6 +131,10 @@ class GameScene: SKScene {
 				}
 			}
 		}
+	}
+	
+	func removeAllFigureSprites() {
+		figuresLayer.removeAllChildren()
 	}
 	
 	private func pointFor(column: Int, row: Int) -> CGPoint {
@@ -200,7 +219,7 @@ class GameScene: SKScene {
 		if let toFigure = level.figure(atColumn: toColumn, row: toRow),
 		   let fromFigure = level.figure(atColumn: swipeFromColumn!, row: swipeFromRow!) {
 			
-			print("*** swapping \(fromFigure) with \(toFigure)")
+//			print("*** swapping \(fromFigure) with \(toFigure)")
 			if let handler = swipeHandler {
 				let swap = Swap(figureA: fromFigure, figureB: toFigure)
 				handler(swap)
@@ -228,6 +247,7 @@ class GameScene: SKScene {
 	
 	func animateMatchedFigures(for chains: Set<Chain>, completion: @escaping () -> Void) {
 		for chain in chains {
+			animateScore(for: chain)
 			for figure in chain.figures {
 				if let sprite = figure.sprite {
 					if sprite.action(forKey: "removing") == nil {
@@ -302,10 +322,6 @@ class GameScene: SKScene {
 		run(SKAction.wait(forDuration: longestDuration), completion: completion)
 	}
 	
-	required init?(coder aDecoder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
-	
 	func animateInvalidSwap(_ swap: Swap, complition: @escaping () -> Void) {
 		let spriteA = swap.figureA.sprite!
 		let spriteB = swap.figureB.sprite!
@@ -323,6 +339,44 @@ class GameScene: SKScene {
 		
 		spriteA.run(SKAction.sequence([moveA, moveB]), completion: complition)
 		spriteB.run(SKAction.sequence([moveB, moveA]))
+	}
+	
+	func animateScore(for chain: Chain) {
+		let firstSprite = chain.firstFigure().sprite!
+		let lastSprite = chain.lastFigure().sprite!
+		
+		let centerPosition = CGPoint(
+			x: (firstSprite.position.x + lastSprite.position.x) / 2,
+			y: (firstSprite.position.y + lastSprite.position.y) / 2 - 8)
+		
+		let scoreLabel = SKLabelNode(fontNamed: "GillSans-BoldItalic")
+		scoreLabel.fontSize = 16
+		scoreLabel.text = String(format: "%ld", chain.score)
+		scoreLabel.position = centerPosition
+		scoreLabel.zPosition = 300
+		figuresLayer.addChild(scoreLabel)
+		
+		let moveAction = SKAction.move(by: CGVector(dx: 0, dy: 3), duration: 0.7)
+		moveAction.timingMode = .easeOut
+		scoreLabel.run(SKAction.sequence([moveAction, SKAction.removeFromParent()]))
+	}
+	
+	func animateGameOver(_ completion: @escaping () -> Void) {
+		let action = SKAction.move(by: CGVector(dx: 0, dy: -size.height), duration: 0.3)
+		action.timingMode = .easeIn
+		gameLayer.run(action, completion: completion)
+	}
+	
+	func animateBeginGame(_ completion: @escaping () -> Void) {
+		gameLayer.isHidden = false
+		gameLayer.position = CGPoint(x: 0, y: size.height)
+		let action = SKAction.move(by: CGVector(dx: 0, dy: -size.height), duration: 0.3)
+		action.timingMode = .easeOut
+		gameLayer.run(action, completion: completion)
+	}
+	
+	required init?(coder aDecoder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
 	}
     
 }

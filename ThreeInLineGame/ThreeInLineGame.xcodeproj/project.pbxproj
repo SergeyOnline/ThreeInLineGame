@@ -13,8 +13,6 @@
 		8724A2AE26BBEAD50089EDCD /* Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8724A2AD26BBEAD50089EDCD /* Tile.swift */; };
 		8724A2B026BBF3FB0089EDCD /* Swap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8724A2AF26BBF3FB0089EDCD /* Swap.swift */; };
 		8724A2B226BBFDBD0089EDCD /* Chain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8724A2B126BBFDBD0089EDCD /* Chain.swift */; };
-		8724A2B826BC16B20089EDCD /* Level_0.json in Resources */ = {isa = PBXBuildFile; fileRef = 8724A2B626BC16B20089EDCD /* Level_0.json */; };
-		8724A2B926BC16B20089EDCD /* Level_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 8724A2B726BC16B20089EDCD /* Level_1.json */; };
 		8778AF6B26BAA77500253557 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8778AF6A26BAA77500253557 /* AppDelegate.swift */; };
 		8778AF6F26BAA77500253557 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 8778AF6E26BAA77500253557 /* Actions.sks */; };
 		8778AF7126BAA77500253557 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8778AF7026BAA77500253557 /* GameScene.swift */; };
@@ -23,6 +21,9 @@
 		8778AF7826BAA77700253557 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8778AF7726BAA77700253557 /* Assets.xcassets */; };
 		8778AF8126BAA9BF00253557 /* Grid.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8778AF7F26BAA9BF00253557 /* Grid.atlas */; };
 		8778AF8226BAA9BF00253557 /* Sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8778AF8026BAA9BF00253557 /* Sprites.atlas */; };
+		8783181B26C2739D00D7248A /* Level_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 8783181826C2739D00D7248A /* Level_2.json */; };
+		8783181C26C2739D00D7248A /* Level_0.json in Resources */ = {isa = PBXBuildFile; fileRef = 8783181926C2739D00D7248A /* Level_0.json */; };
+		8783181D26C2739D00D7248A /* Level_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 8783181A26C2739D00D7248A /* Level_1.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,8 +34,6 @@
 		8724A2AD26BBEAD50089EDCD /* Tile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tile.swift; sourceTree = "<group>"; };
 		8724A2AF26BBF3FB0089EDCD /* Swap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swap.swift; sourceTree = "<group>"; };
 		8724A2B126BBFDBD0089EDCD /* Chain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chain.swift; sourceTree = "<group>"; };
-		8724A2B626BC16B20089EDCD /* Level_0.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Level_0.json; sourceTree = "<group>"; };
-		8724A2B726BC16B20089EDCD /* Level_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Level_1.json; sourceTree = "<group>"; };
 		8778AF6726BAA77500253557 /* ThreeInLineGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThreeInLineGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8778AF6A26BAA77500253557 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8778AF6E26BAA77500253557 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -45,6 +44,9 @@
 		8778AF7926BAA77700253557 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8778AF7F26BAA9BF00253557 /* Grid.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Grid.atlas; sourceTree = "<group>"; };
 		8778AF8026BAA9BF00253557 /* Sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Sprites.atlas; sourceTree = "<group>"; };
+		8783181826C2739D00D7248A /* Level_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Level_2.json; sourceTree = "<group>"; };
+		8783181926C2739D00D7248A /* Level_0.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Level_0.json; sourceTree = "<group>"; };
+		8783181A26C2739D00D7248A /* Level_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Level_1.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,15 +60,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		8724A2B526BC16B20089EDCD /* Levels */ = {
-			isa = PBXGroup;
-			children = (
-				8724A2B626BC16B20089EDCD /* Level_0.json */,
-				8724A2B726BC16B20089EDCD /* Level_1.json */,
-			);
-			path = Levels;
-			sourceTree = "<group>";
-		};
 		8778AF5E26BAA77500253557 = {
 			isa = PBXGroup;
 			children = (
@@ -86,7 +79,7 @@
 		8778AF6926BAA77500253557 /* ThreeInLineGame */ = {
 			isa = PBXGroup;
 			children = (
-				8724A2B526BC16B20089EDCD /* Levels */,
+				8783181726C2739D00D7248A /* Levels */,
 				8778AF6A26BAA77500253557 /* AppDelegate.swift */,
 				8778AF7026BAA77500253557 /* GameScene.swift */,
 				8778AF7226BAA77500253557 /* GameViewController.swift */,
@@ -105,6 +98,17 @@
 				8724A2B126BBFDBD0089EDCD /* Chain.swift */,
 			);
 			path = ThreeInLineGame;
+			sourceTree = "<group>";
+		};
+		8783181726C2739D00D7248A /* Levels */ = {
+			isa = PBXGroup;
+			children = (
+				8783181826C2739D00D7248A /* Level_2.json */,
+				8783181926C2739D00D7248A /* Level_0.json */,
+				8783181A26C2739D00D7248A /* Level_1.json */,
+			);
+			name = Levels;
+			path = ../../../ThreeInLine/ThreeInLine/Levels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -164,13 +168,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8724A2B926BC16B20089EDCD /* Level_1.json in Resources */,
 				8778AF8226BAA9BF00253557 /* Sprites.atlas in Resources */,
-				8724A2B826BC16B20089EDCD /* Level_0.json in Resources */,
+				8783181B26C2739D00D7248A /* Level_2.json in Resources */,
 				8778AF7626BAA77500253557 /* Main.storyboard in Resources */,
 				8778AF7826BAA77700253557 /* Assets.xcassets in Resources */,
+				8783181D26C2739D00D7248A /* Level_1.json in Resources */,
 				8778AF8126BAA9BF00253557 /* Grid.atlas in Resources */,
 				8778AF6F26BAA77500253557 /* Actions.sks in Resources */,
+				8783181C26C2739D00D7248A /* Level_0.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,7 +8,6 @@
 import Foundation
 
 class Chain: Hashable, CustomStringConvertible {
-	var figures: [Figure] = []
 	
 	enum ChainType: CustomStringConvertible {
 		case horizontal
@@ -22,6 +21,8 @@ class Chain: Hashable, CustomStringConvertible {
 		}
 	}
 	
+	var figures: [Figure] = []
+	var score = 0
 	var chainType: ChainType
 	
 	init(chainType: ChainType) {

@@ -9,10 +9,14 @@ import Foundation
 
 let numColumns = 9
 let numRows = 9
+let numLevels = 2
 
 class Level {
 
 	private var possibleSwaps: Set<Swap> = []
+	var targetScore = 0
+	var maximumMovies = 0
+	private var comboMultiplier = 0
 	
 	private var figures = Array2D<Figure?>(columns: numColumns, rows: numRows, initialValue: Figure(column: 0, row: 0, figureType: FigureType.unknown))
 	
@@ -35,7 +39,7 @@ class Level {
 		repeat {
 			set = createInitialFigures()
 			detectPossibleSwaps()
-			print("possible swaps: \(possibleSwaps)")
+//			print("possible swaps: \(possibleSwaps)")
 		} while possibleSwaps.count == 0
 		
 		return set
@@ -324,6 +328,9 @@ class Level {
 
 		removeFigures(in: horizontalChains)
 		removeFigures(in: verticalChains)
+		
+		calculateScore(for: horizontalChains)
+		calculateScore(for: verticalChains)
 
 		return horizontalChains.union(verticalChains)
 	}
@@ -367,10 +374,23 @@ class Level {
 		return columns
 	}
 	
+	private func calculateScore(for chains: Set<Chain>) {
+		for chain in chains {
+			chain.score = 60 * (chain.lenght - 2) * comboMultiplier
+			comboMultiplier += 1
+		}
+	}
+	
+	func resetComboMultiplier() {
+		comboMultiplier = 1
+	}
+	
 	init(filename: String) {
 		guard let levelData = LevelData.loadFrom(file: filename) else { return }
 
 		let tilesArray = levelData.tiles
+		targetScore = levelData.targetScore ?? 0
+		maximumMovies = levelData.moves ?? 0
 
 		for (row, rowArray) in tilesArray!.enumerated() {
 			let titleRow = numRows - row - 1
