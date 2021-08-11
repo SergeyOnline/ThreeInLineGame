@@ -152,6 +152,27 @@ class GameScene: SKScene {
 		}
 	}
 	
+	private func trySwap(horizontalDelta: Int, verticalDelta: Int) {
+		
+		let toColumn = swipeFromColumn! + horizontalDelta
+		let toRow = swipeFromRow! + verticalDelta
+		
+		guard toColumn >= 0 && toColumn < numColumns else { return }
+		guard toRow >= 0 && toRow < numRows else { return }
+		
+		if let toFigure = level.figure(atColumn: toColumn, row: toRow),
+		   let fromFigure = level.figure(atColumn: swipeFromColumn!, row: swipeFromRow!) {
+			
+//			print("*** swapping \(fromFigure) with \(toFigure)")
+			if let handler = swipeHandler {
+				let swap = Swap(figureA: fromFigure, figureB: toFigure)
+				handler(swap)
+			}
+		}
+	}
+	
+	//MARK: - Touches
+	
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		guard let touch = touches.first else { return }
 		let location = touch.location(in: figuresLayer)
@@ -208,84 +229,59 @@ class GameScene: SKScene {
 		touchesEnded(touches, with: event)
 	}
 	
-	private func trySwap(horizontalDelta: Int, verticalDelta: Int) {
-		
-		let toColumn = swipeFromColumn! + horizontalDelta
-		let toRow = swipeFromRow! + verticalDelta
-		
-		guard toColumn >= 0 && toColumn < numColumns else { return }
-		guard toRow >= 0 && toRow < numRows else { return }
-		
-		if let toFigure = level.figure(atColumn: toColumn, row: toRow),
-		   let fromFigure = level.figure(atColumn: swipeFromColumn!, row: swipeFromRow!) {
-			
-//			print("*** swapping \(fromFigure) with \(toFigure)")
-			if let handler = swipeHandler {
-				let swap = Swap(figureA: fromFigure, figureB: toFigure)
-				handler(swap)
-			}
-		}
+	//MARK: - Animations
+	
+	func animateGameOver(_ completion: @escaping () -> Void) {
+		let action = SKAction.move(by: CGVector(dx: 0, dy: -size.height), duration: 0.3)
+		action.timingMode = .easeIn
+		gameLayer.run(action, completion: completion)
 	}
 	
-	func animate(_ swap: Swap, completion: @escaping () -> Void) {
+	func animateBeginGame(_ completion: @escaping () -> Void) {
+		gameLayer.isHidden = false
+		gameLayer.position = CGPoint(x: 0, y: size.height)
+		let action = SKAction.move(by: CGVector(dx: 0, dy: -size.height), duration: 0.3)
+		action.timingMode = .easeOut
+		gameLayer.run(action, completion: completion)
+	}
+	
+	func animateScore(for chain: Chain) {
+		let firstSprite = chain.firstFigure().sprite!
+		let lastSprite = chain.lastFigure().sprite!
+		
+		let centerPosition = CGPoint(
+			x: (firstSprite.position.x + lastSprite.position.x) / 2,
+			y: (firstSprite.position.y + lastSprite.position.y) / 2 - 8)
+		
+		let scoreLabel = SKLabelNode(fontNamed: "GillSans-BoldItalic")
+		scoreLabel.fontSize = 16
+		scoreLabel.text = String(format: "%ld", chain.score)
+		scoreLabel.position = centerPosition
+		scoreLabel.zPosition = 300
+		figuresLayer.addChild(scoreLabel)
+		
+		let moveAction = SKAction.move(by: CGVector(dx: 0, dy: 3), duration: 0.7)
+		moveAction.timingMode = .easeOut
+		scoreLabel.run(SKAction.sequence([moveAction, SKAction.removeFromParent()]))
+	}
+	
+	func animateInvalidSwap(_ swap: Swap, complition: @escaping () -> Void) {
 		let spriteA = swap.figureA.sprite!
 		let spriteB = swap.figureB.sprite!
 		
 		spriteA.zPosition = 100
 		spriteB.zPosition = 90
 		
-		let duration: TimeInterval = 0.3
+		let duration: TimeInterval = 0.2
 		
 		let moveA = SKAction.move(to: spriteB.position, duration: duration)
 		moveA.timingMode = .easeOut
-		spriteA.run(moveA, completion: completion)
 		
 		let moveB = SKAction.move(to: spriteA.position, duration: duration)
 		moveB.timingMode = .easeOut
-		spriteB.run(moveB)
-	}
-	
-	func animateMatchedFigures(for chains: Set<Chain>, completion: @escaping () -> Void) {
-		for chain in chains {
-			animateScore(for: chain)
-			for figure in chain.figures {
-				if let sprite = figure.sprite {
-					if sprite.action(forKey: "removing") == nil {
-						let scaleAction = SKAction.scale(to: 0.1, duration: 0.3)
-						scaleAction.timingMode = .easeOut
-						sprite.run(SKAction.sequence([scaleAction, SKAction.removeFromParent()]), withKey: "removing")
-					}
-				}
-			}
-		}
 		
-		run(SKAction.wait(forDuration: 0.3), completion: completion)
-	}
-	
-	func animateFallingFigures(in columns: [[Figure]], completion: @escaping () -> Void) {
-		var longestDuration: TimeInterval = 0
-		for array in columns {
-			for (index, figure) in array.enumerated() {
-				let newPosition = pointFor(column: figure.column, row: figure.row)
-				
-				let delay = 0.05 + 0.15 * TimeInterval(index)
-				
-				let sprite = figure.sprite!
-				
-				let duration = TimeInterval(((sprite.position.y - newPosition.y) / tileHeight) * 0.1)
-				
-				longestDuration = max(longestDuration, duration + delay)
-				
-				let moveAction = SKAction.move(to: newPosition, duration: duration)
-				moveAction.timingMode = .easeOut
-				sprite.run(SKAction.sequence([
-												SKAction.wait(forDuration: delay),
-												SKAction.group([moveAction])]))
-				
-			}
-		}
-		
-		run(SKAction.wait(forDuration: 0.3), completion: completion)
+		spriteA.run(SKAction.sequence([moveA, moveB]), completion: complition)
+		spriteB.run(SKAction.sequence([moveB, moveA]))
 	}
 	
 	func animateNewFigure(in columns: [[Figure]], completion: @escaping () -> Void) {
@@ -322,57 +318,65 @@ class GameScene: SKScene {
 		run(SKAction.wait(forDuration: longestDuration), completion: completion)
 	}
 	
-	func animateInvalidSwap(_ swap: Swap, complition: @escaping () -> Void) {
+	func animateFallingFigures(in columns: [[Figure]], completion: @escaping () -> Void) {
+		var longestDuration: TimeInterval = 0
+		for array in columns {
+			for (index, figure) in array.enumerated() {
+				let newPosition = pointFor(column: figure.column, row: figure.row)
+				
+				let delay = 0.05 + 0.15 * TimeInterval(index)
+				
+				let sprite = figure.sprite!
+				
+				let duration = TimeInterval(((sprite.position.y - newPosition.y) / tileHeight) * 0.1)
+				
+				longestDuration = max(longestDuration, duration + delay)
+				
+				let moveAction = SKAction.move(to: newPosition, duration: duration)
+				moveAction.timingMode = .easeOut
+				sprite.run(SKAction.sequence([
+												SKAction.wait(forDuration: delay),
+												SKAction.group([moveAction])]))
+				
+			}
+		}
+		
+		run(SKAction.wait(forDuration: 0.3), completion: completion)
+	}
+	
+	func animateMatchedFigures(for chains: Set<Chain>, completion: @escaping () -> Void) {
+		for chain in chains {
+			animateScore(for: chain)
+			for figure in chain.figures {
+				if let sprite = figure.sprite {
+					if sprite.action(forKey: "removing") == nil {
+						let scaleAction = SKAction.scale(to: 0.1, duration: 0.3)
+						scaleAction.timingMode = .easeOut
+						sprite.run(SKAction.sequence([scaleAction, SKAction.removeFromParent()]), withKey: "removing")
+					}
+				}
+			}
+		}
+		
+		run(SKAction.wait(forDuration: 0.3), completion: completion)
+	}
+	
+	func animate(_ swap: Swap, completion: @escaping () -> Void) {
 		let spriteA = swap.figureA.sprite!
 		let spriteB = swap.figureB.sprite!
 		
 		spriteA.zPosition = 100
 		spriteB.zPosition = 90
 		
-		let duration: TimeInterval = 0.2
+		let duration: TimeInterval = 0.3
 		
 		let moveA = SKAction.move(to: spriteB.position, duration: duration)
 		moveA.timingMode = .easeOut
+		spriteA.run(moveA, completion: completion)
 		
 		let moveB = SKAction.move(to: spriteA.position, duration: duration)
 		moveB.timingMode = .easeOut
-		
-		spriteA.run(SKAction.sequence([moveA, moveB]), completion: complition)
-		spriteB.run(SKAction.sequence([moveB, moveA]))
-	}
-	
-	func animateScore(for chain: Chain) {
-		let firstSprite = chain.firstFigure().sprite!
-		let lastSprite = chain.lastFigure().sprite!
-		
-		let centerPosition = CGPoint(
-			x: (firstSprite.position.x + lastSprite.position.x) / 2,
-			y: (firstSprite.position.y + lastSprite.position.y) / 2 - 8)
-		
-		let scoreLabel = SKLabelNode(fontNamed: "GillSans-BoldItalic")
-		scoreLabel.fontSize = 16
-		scoreLabel.text = String(format: "%ld", chain.score)
-		scoreLabel.position = centerPosition
-		scoreLabel.zPosition = 300
-		figuresLayer.addChild(scoreLabel)
-		
-		let moveAction = SKAction.move(by: CGVector(dx: 0, dy: 3), duration: 0.7)
-		moveAction.timingMode = .easeOut
-		scoreLabel.run(SKAction.sequence([moveAction, SKAction.removeFromParent()]))
-	}
-	
-	func animateGameOver(_ completion: @escaping () -> Void) {
-		let action = SKAction.move(by: CGVector(dx: 0, dy: -size.height), duration: 0.3)
-		action.timingMode = .easeIn
-		gameLayer.run(action, completion: completion)
-	}
-	
-	func animateBeginGame(_ completion: @escaping () -> Void) {
-		gameLayer.isHidden = false
-		gameLayer.position = CGPoint(x: 0, y: size.height)
-		let action = SKAction.move(by: CGVector(dx: 0, dy: -size.height), duration: 0.3)
-		action.timingMode = .easeOut
-		gameLayer.run(action, completion: completion)
+		spriteB.run(moveB)
 	}
 	
 	required init?(coder aDecoder: NSCoder) {

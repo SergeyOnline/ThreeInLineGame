@@ -34,26 +34,16 @@ class GameViewController: UIViewController {
 		setupLabeles()
         
         if let view = self.view as! SKView? {
+			
 
-			let targetVStack = UIStackView(arrangedSubviews: [target, targetLabel])
-			targetVStack.axis = .vertical
-			targetVStack.distribution = .equalCentering
-			targetVStack.spacing = 4
+			let targetVStack = UIStackView(withAxis: .vertical, distribution: .equalCentering, arrangedSubviews: [target, targetLabel])
 			
-			let movesVStack = UIStackView(arrangedSubviews: [moves, movesLabel])
-			movesVStack.axis = .vertical
-			movesVStack.distribution = .equalCentering
-			movesVStack.spacing = 4
+			let movesVStack = UIStackView(withAxis: .vertical, distribution: .equalCentering, arrangedSubviews: [moves, movesLabel])
 			
-			let scoreVStack = UIStackView(arrangedSubviews: [scores, scoreLabel])
-			scoreVStack.axis = .vertical
-			scoreVStack.distribution = .equalCentering
-			scoreVStack.spacing = 4
+			let scoreVStack = UIStackView(withAxis: .vertical, distribution: .equalCentering, arrangedSubviews: [scores, scoreLabel])
 			
-			let horizontalStack = UIStackView(arrangedSubviews: [targetVStack, movesVStack, scoreVStack])
-			horizontalStack.axis = .horizontal
-			horizontalStack.distribution = .fillEqually
-			horizontalStack.spacing = 4
+			let horizontalStack = UIStackView(withAxis: .horizontal, distribution: .fillEqually, arrangedSubviews: [targetVStack, movesVStack, scoreVStack])
+			
 			horizontalStack.translatesAutoresizingMaskIntoConstraints = false
 			
 			view.addSubview(horizontalStack)
@@ -63,15 +53,8 @@ class GameViewController: UIViewController {
 			horizontalStack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
 			horizontalStack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10).isActive = true
 			
-			shuffleButton = UIButton()
-			shuffleButton.backgroundColor = .systemGray3
-
-			shuffleButton.setTitle("Shuffle", for: .normal)
-			shuffleButton.setTitleColor(.black, for: .normal)
-			shuffleButton.setTitleColor(.white, for: .highlighted)
-			shuffleButton.layer.cornerRadius = 10
-			shuffleButton.addTarget(self, action: #selector(shuffleButtonPressed), for: .touchDown)
-
+			
+			setupShaffleButton()
 			shuffleButton.translatesAutoresizingMaskIntoConstraints = false
 			view.addSubview(shuffleButton)
 
@@ -190,48 +173,25 @@ class GameViewController: UIViewController {
 		updateLabels()
 		
 		if score >= level.targetScore {
+			//FIXME: - delete label
+			let label = UILabel(withTitleLabel: "Level comlete")
+			label.translatesAutoresizingMaskIntoConstraints = false
+			gameOverPanel.addSubview(label)
+			label.centerXAnchor.constraint(equalTo: gameOverPanel.centerXAnchor).isActive = true
+			label.centerYAnchor.constraint(equalTo: gameOverPanel.centerYAnchor).isActive = true
 //			gameOverPanel.image = UIImage(named: "LevelComplete")
 			currentLevelNumber = currentLevelNumber < numLevels ? currentLevelNumber + 1 : 0
-			print("CURR LN: \(currentLevelNumber)")
 			showGameOver()
 		} else if movesLeft == 0 {
+			//FIXME: - delete label
+			let label = UILabel(withTitleLabel: "Game over")
+			label.translatesAutoresizingMaskIntoConstraints = false
+			gameOverPanel.addSubview(label)
+			label.centerXAnchor.constraint(equalTo: gameOverPanel.centerXAnchor).isActive = true
+			label.centerYAnchor.constraint(equalTo: gameOverPanel.centerYAnchor).isActive = true
 //			gameOverPanel.image = UIImage(named: "GameOver")
 			showGameOver()
 		}
-	}
-	
-	func setupLabeles() {
-		target = UILabel()
-		target.text = "Target:"
-		target.textAlignment = .center
-		target.backgroundColor = .red
-		
-		targetLabel = UILabel()
-		targetLabel.textAlignment = .center
-		targetLabel.text = "0"
-		targetLabel.backgroundColor = .red
-		
-		
-		moves = UILabel()
-		moves.text = "Moves:"
-		moves.textAlignment = .center
-		moves.backgroundColor = .green
-		
-		movesLabel = UILabel()
-		movesLabel.textAlignment = .center
-		movesLabel.text = "0"
-		movesLabel.backgroundColor = .green
-		
-		
-		scores = UILabel()
-		scores.text = "Score:"
-		scores.textAlignment = .center
-		scores.backgroundColor = .blue
-		
-		scoreLabel = UILabel()
-		scoreLabel.textAlignment = .center
-		scoreLabel.text = "0"
-		scoreLabel.backgroundColor = .blue
 	}
 
 	func updateLabels() {
@@ -243,6 +203,7 @@ class GameViewController: UIViewController {
 	func showGameOver() {
 		shuffleButton.isHidden = true
 		gameOverPanel.isHidden = false
+		
 		scene.isUserInteractionEnabled = false
 		
 		scene.animateGameOver {
@@ -258,22 +219,58 @@ class GameViewController: UIViewController {
 		gameOverPanel.isHidden = true
 		scene.isUserInteractionEnabled = true
 		
+		//FIXME: - delete label
+		for view in gameOverPanel.subviews {
+			view.removeFromSuperview()
+		}
+		
 		setupLevel(number: currentLevelNumber)
 	}
+	
+	//MARK: - Setup components
+	
+	func setupShaffleButton() {
+		shuffleButton = UIButton()
+		shuffleButton.backgroundColor = .systemTeal
 
-//    override var shouldAutorotate: Bool {
-//        return true
-//    }
+		shuffleButton.setTitle("Shuffle", for: .normal)
+		shuffleButton.setTitleColor(.black, for: .normal)
+		shuffleButton.setTitleColor(.white, for: .highlighted)
+		shuffleButton.layer.cornerRadius = 10
+		shuffleButton.addTarget(self, action: #selector(shuffleButtonPressed), for: .touchDown)
+	}
+	
+	func setupLabeles() {
+		target = UILabel(withTitleLabel: "Target:")
+		targetLabel = UILabel(withTitleLabel: "0")
+		
+		moves = UILabel(withTitleLabel: "Moves:")
+		movesLabel = UILabel(withTitleLabel: "0")
+		
+		scores = UILabel(withTitleLabel: "Score:")
+		scoreLabel = UILabel(withTitleLabel: "0")
+	}
+	
+	
+}
 
-//    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-//        if UIDevice.current.userInterfaceIdiom == .phone {
-//            return .allButUpsideDown
-//        } else {
-//            return .all
-//        }
-//    }
-//
-//    override var prefersStatusBarHidden: Bool {
-//        return true
-//    }
+extension UILabel {
+	convenience init(withTitleLabel text: String) {
+		self.init()
+		self.text = text
+		self.textColor = .black
+		self.textAlignment = .center
+		self.backgroundColor = .systemTeal
+		self.layer.masksToBounds = true
+		self.layer.cornerRadius = 5
+	}
+}
+
+extension UIStackView {
+	convenience init(withAxis axis: NSLayoutConstraint.Axis, distribution: UIStackView.Distribution, arrangedSubviews: [UIView]) {
+		self.init(arrangedSubviews: arrangedSubviews)
+		self.axis = axis
+		self.distribution = distribution
+		self.spacing = 4
+	}
 }

@@ -140,57 +140,6 @@ class Level {
 		possibleSwaps = set
 	}
 	
-//	func detectPossibleSwaps() {
-//		var set: Set<Swap> = []
-//
-//		for row in 0..<numRows {
-//			for column in 0..<numColumns {
-//				if let figure = figures[column, row] {
-//					if column < numColumns - 1, let other = figures[column + 1, row] {
-//						figures[column, row] = other
-//						figures[column + 1, row] = figure
-//
-//						if hasChain(atColumn: column + 1, row: row) ||
-//							hasChain(atColumn: column, row: row) {
-//							set.insert(Swap(figureA: figure, figureB: other))
-//						}
-//
-//						figures[column, row] = figure
-//						figures[column + 1, row] = other
-//					}
-//
-//					if row < numRows - 1, let other = figures[column, row + 1] {
-//						figures[column, row] = other
-//						figures[column, row + 1] = figure
-//
-//						if hasChain(atColumn: column, row: row + 1) ||
-//							hasChain(atColumn: column, row: row) {
-//							set.insert(Swap(figureA: figure, figureB: other))
-//						}
-//
-//						figures[column, row] = figure
-//						figures[column, row + 1] = other
-//					}
-//				} else if column == numColumns - 1, let figure = figures[column, row] {
-//					if row < numRows - 1, let other = figures[column, row + 1] {
-//						figures[column, row] = other
-//						figures[column, row + 1] = figure
-//
-//						if hasChain(atColumn: column, row: row + 1) ||
-//							hasChain(atColumn: column, row: row) {
-//							set.insert(Swap(figureA: figure, figureB: other))
-//						}
-//
-//						figures[column, row] = figure
-//						figures[column, row + 1] = other
-//					}
-//				}
-//			}
-//		}
-//
-//		possibleSwaps = set
-//	}
-	
 	func isPossibleSwap(_ swap: Swap) -> Bool {
 		return possibleSwaps.contains(swap)
 	}
