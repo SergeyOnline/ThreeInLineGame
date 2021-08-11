@@ -11,8 +11,8 @@ import GameplayKit
 class GameScene: SKScene {
 	
 	var level: Level!
-	let tileWidth: CGFloat = 36.0
-	let tileHeight: CGFloat = 36.0
+	let tileWidth: CGFloat = 32.0
+	let tileHeight: CGFloat = 32.0
 	let tilesLayer = SKNode()
 	let cropLayer = SKCropNode()
 	let maskLayer = SKNode()
@@ -28,14 +28,20 @@ class GameScene: SKScene {
 	override init(size: CGSize) {
 		super.init(size: size)
 		
+		anchorPoint = CGPoint(x: 0.5, y: 0.5)
+		
+		let background = SKSpriteNode(imageNamed: "Background")
+		background.size = size
+		addChild(background)
+		
 		let _ = SKLabelNode(fontNamed: "GillSans-BoldItalic")
 		
 		addChild(gameLayer)
 		gameLayer.isHidden = true
 		
 		let layerPosition = CGPoint(
-			x: size.width / 2 - tileWidth * CGFloat(numColumns) / 2,
-			y: size.height / 2 - tileHeight * CGFloat(numRows) / 2)
+			x:  -tileWidth * CGFloat(numColumns) / 2,
+			y:  -tileHeight * CGFloat(numRows) / 2)
 		
 		tilesLayer.position = layerPosition
 		maskLayer.position = layerPosition

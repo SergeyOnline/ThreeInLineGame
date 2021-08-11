@@ -32,9 +32,8 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
 		
 		setupLabeles()
-        
+		
         if let view = self.view as! SKView? {
-			
 
 			let targetVStack = UIStackView(withAxis: .vertical, distribution: .equalCentering, arrangedSubviews: [target, targetLabel])
 			
@@ -49,7 +48,7 @@ class GameViewController: UIViewController {
 			view.addSubview(horizontalStack)
 
 				
-			horizontalStack.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+			horizontalStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 60).isActive = true
 			horizontalStack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
 			horizontalStack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10).isActive = true
 			
@@ -58,7 +57,7 @@ class GameViewController: UIViewController {
 			shuffleButton.translatesAutoresizingMaskIntoConstraints = false
 			view.addSubview(shuffleButton)
 
-			shuffleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+			shuffleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -60).isActive = true
 			shuffleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
 			shuffleButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
 			
@@ -82,11 +81,8 @@ class GameViewController: UIViewController {
 		let skView = view as! SKView
 		skView.isMultipleTouchEnabled = false
 		
-		
-		let size = CGSize(width: view.frame.width + 60, height: view.frame.width + 60)
-		
-		scene = GameScene(size: size)
-		scene.scaleMode = .aspectFit
+		scene = GameScene(size: skView.bounds.size)
+		scene.scaleMode = .aspectFill
 		scene.backgroundColor = .systemTeal
 		
 		level = Level(filename: "Level_\(levelNumber)")
