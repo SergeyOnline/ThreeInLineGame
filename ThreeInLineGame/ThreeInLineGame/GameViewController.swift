@@ -8,6 +8,7 @@
 import UIKit
 import SpriteKit
 import GameplayKit
+import AVFoundation
 
 class GameViewController: UIViewController {
 	
@@ -27,6 +28,18 @@ class GameViewController: UIViewController {
 	
 	var score: Int!
 	var movesLeft: Int!
+	
+	lazy var backgroundMusic: AVAudioPlayer? = {
+		guard let url = Bundle.main.url(forResource: "Background", withExtension: "mp3") else { print("FILE NOT FOUND"); return nil }
+		do {
+			let player = try AVAudioPlayer(contentsOf: url)
+			player.numberOfLoops = -1
+			player.volume = 0.2
+			return player
+		} catch {
+			return nil
+		}
+	}()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,6 +86,8 @@ class GameViewController: UIViewController {
             
 //            view.showsFPS = true
 //            view.showsNodeCount = true
+			
+			backgroundMusic?.play()
 			
         }
     }

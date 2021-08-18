@@ -11,12 +11,16 @@ import GameplayKit
 class GameScene: SKScene {
 	
 	var level: Level!
-	let tileWidth: CGFloat = 32.0
-	let tileHeight: CGFloat = 32.0
+	let tileWidth: CGFloat = 36.0
+	let tileHeight: CGFloat = 36.0
 	let tilesLayer = SKNode()
 	let cropLayer = SKCropNode()
 	let maskLayer = SKNode()
 	var swipeHandler: ((Swap) -> Void)?
+	
+	let matchSound = SKAction.playSoundFileNamed("matchSound.wav", waitForCompletion: false)
+	let invalidSwapSound = SKAction.playSoundFileNamed("invalidSwapSound.wav", waitForCompletion: false)
+	let swapSound = SKAction.playSoundFileNamed("swapSound.wav", waitForCompletion: false)
 	
 	private var swipeFromColumn: Int?
 	private var swipeFromRow: Int?
@@ -288,6 +292,8 @@ class GameScene: SKScene {
 		
 		spriteA.run(SKAction.sequence([moveA, moveB]), completion: complition)
 		spriteB.run(SKAction.sequence([moveB, moveA]))
+		
+		run(invalidSwapSound)
 	}
 	
 	func animateNewFigure(in columns: [[Figure]], completion: @escaping () -> Void) {
@@ -363,7 +369,7 @@ class GameScene: SKScene {
 				}
 			}
 		}
-		
+		run(matchSound)
 		run(SKAction.wait(forDuration: 0.3), completion: completion)
 	}
 	
@@ -383,6 +389,8 @@ class GameScene: SKScene {
 		let moveB = SKAction.move(to: spriteA.position, duration: duration)
 		moveB.timingMode = .easeOut
 		spriteB.run(moveB)
+		
+		run(swapSound)
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
